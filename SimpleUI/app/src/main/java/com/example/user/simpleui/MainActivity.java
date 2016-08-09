@@ -39,5 +39,6 @@ public class MainActivity extends AppCompatActivity {
                 String text = editText.getText().toString(); //將轉成字串，去除其他屬性
                 text = text + " Order: " + drink;
                 textView.setText(text);
+                editText.setText(" ");
             }
         }
