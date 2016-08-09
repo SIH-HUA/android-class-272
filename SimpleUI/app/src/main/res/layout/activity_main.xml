@@ -22,9 +22,41 @@
         android:layout_height="wrap_content"
         android:text="CLICK"
         android:id="@+id/button"
-        android:layout_below="@+id/textView"
+        android:onClick="click"
+        android:textSize="24dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="click"
-        android:textSize="24dp" />
+        android:layout_below="@+id/radio123" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:layout_below="@+id/editText"
+        android:id="@+id/radio123">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Black Tea"
+            android:id="@+id/blackTeaRadioButton"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Green Tea"
+            android:id="@+id/greenTeaRadioButton"
+            android:checked="false" />
+    </RadioGroup>
 </RelativeLayout>
