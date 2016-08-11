@@ -1,7 +1,11 @@
 package com.example.user.simpleui;
 
+import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.ActionMode;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +16,10 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
     String drink = "Black Tea"; //初始飲料
 
     List<Order> data = new ArrayList<>();
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +68,22 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Order order = (Order)parent.getAdapter().getItem(position);
-                Toast.makeText(MainActivity.this,order.note,Toast.LENGTH_LONG).show();//若直接打this會直接指向包住的listener，不會指向Main activity //出現顯示框
+                Order order = (Order) parent.getAdapter().getItem(position);
+                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//若直接打this會直接指向包住的listener，不會指向Main activity //出現顯示框
             }
         }); //當item被點選時會觸發的事件
 
         setupListView();
         setupSpinner();
+
+        Log.d("REBUG", "MainActivityOnCreate");
+
     }
 
     private void setupListView() {
         //String[] data = new String[]{"1","2","3","4","5","6","7","8"};
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, data); //轉換成每筆有用的ITEM
-        /*List<Map<String,String>> mapList = new ArrayList<>();
+        /*List<Map<String,String>> mapList = new ArrayList<>();   //第一個客製化itemView的方法
         for(Order order : data)
         {
             Map<String,String> item = new HashMap<>();
@@ -80,16 +96,16 @@ public class MainActivity extends AppCompatActivity {
         String[] from = {"note","storeInfo","drink"}; //從哪拿來
         int[] to = {R.id.noteTextView,R.id.storeInfoTextView,R.id.drinkTextView};
         SimpleAdapter adapter = new SimpleAdapter(this,mapList,R.layout.listview_order_item,from,to); //所有資料，item，從哪拿，拿去哪*/
-        OrderAdapter adapter = new OrderAdapter(this,data); //是一個activity；資料
+        OrderAdapter adapter = new OrderAdapter(this, data); //是一個activity；資料
         listView.setAdapter(adapter);
     }
 
-    private void setupSpinner()
-    {
+    private void setupSpinner() {
         String[] storeInfo = getResources().getStringArray(R.array.storeInfo); //重resource裡拿出定義檔
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,storeInfo);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
         spinner.setAdapter(adapter);
     }
+
     public void click(View view) //因為view是所有原件的parent，因此用view
     {
         String text = editText.getText().toString(); //將轉成字串，去除其他屬性
@@ -99,9 +115,43 @@ public class MainActivity extends AppCompatActivity {
         Order order = new Order();
         order.note = text;
         order.drink = drink;
-        order.storeInfo = (String)spinner.getSelectedItem(); //物件型態轉String，給被選取的item資料
+        order.storeInfo = (String) spinner.getSelectedItem(); //物件型態轉String，給被選取的item資料
         data.add(order); //將東西丟入list內
         setupListView(); ///重整listview
+
+    }
+
+
+   @Override
+   protected void onStart() {
+       super.onStart();
+       Log.d("REBUG", "MainActivityOnStart");
+   }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("REBUG", "MainActivityOnResume");
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("REBUG", "MainActivityOnPause");
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("REBUG", "MainActivityOnStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("REBUG", "MainActivityOnDestroy");
     }
 
 
