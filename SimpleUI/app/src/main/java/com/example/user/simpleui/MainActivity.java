@@ -1,5 +1,6 @@
 package com.example.user.simpleui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -119,6 +120,13 @@ public class MainActivity extends AppCompatActivity {
         data.add(order); //將東西丟入list內
         setupListView(); ///重整listview
 
+    }
+
+    public void goToMenu(View view) //誰呼叫誰進來
+    {
+        Intent intent = new Intent(); //呼叫第二個頁面，兩個頁面互傳東西
+        intent.setClass(this,DrinkMenuActivity.class);//當前的activity；想呼叫到哪個activity
+        startActivity(intent); //會把DrinkMenuActivity呼叫出來，並進行lifecycle，新的頁面會直接疊在舊的頁面上會形成一個stack
     }
 
 
