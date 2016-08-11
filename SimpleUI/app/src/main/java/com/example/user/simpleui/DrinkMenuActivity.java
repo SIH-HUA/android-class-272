@@ -1,8 +1,11 @@
 package com.example.user.simpleui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,7 +21,7 @@ public class DrinkMenuActivity extends AppCompatActivity {
     int[] lPrices = {35,45,55,45};
     int[] mPrices = {25,35,45,35};
     int[] imageIds = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4}; //給圖片ID
-
+    int total = 0;
     List<Drink> drinkList = new ArrayList<>();
 
     @Override
@@ -28,6 +31,15 @@ public class DrinkMenuActivity extends AppCompatActivity {
         setdata(); //將資料丟入drink內
         drinkMenuListView = (ListView)findViewById(R.id.drinkMenuListView); //藉由這個找id
         totalTextView = (TextView)findViewById(R.id.totalTextView);
+
+        drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Drink drink = (Drink)parent.getAdapter().getItem(position);
+                total+=drink.mPrice;
+                totalTextView.setText(String.valueOf(total));
+            }
+        });
 
         setupDrinkMenu();
         Log.d("DEBUG", "DrinkMenuActivityOnCreat");
@@ -45,6 +57,16 @@ public class DrinkMenuActivity extends AppCompatActivity {
             drinkList.add(drink); //將drink丟入drinkList內
         }
     }
+
+    public void done(View view)
+    {
+        Intent intent = new Intent();
+        intent.putExtra("result",String.valueOf(total)); //將資料丟入intent內
+        setResult(RESULT_OK,intent); //當activity退掉時，o不ok；回去狀態ok，回去攜帶的資料為intent
+        finish();
+
+    }
+
 
     private void setupDrinkMenu()
     {

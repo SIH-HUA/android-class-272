@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Total"
+        android:text="Total:"
         android:id="@+id/textView2"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -45,5 +45,6 @@
         android:id="@+id/button3"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="done" />
 </RelativeLayout>

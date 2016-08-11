@@ -29,6 +29,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    static final int REQUEST_CODE_DRINK_MENU_ACTIVITY = 0;
+
     TextView textView;
     EditText editText;
     RadioGroup radioGroup;
@@ -125,12 +127,26 @@ public class MainActivity extends AppCompatActivity {
     public void goToMenu(View view) //誰呼叫誰進來
     {
         Intent intent = new Intent(); //呼叫第二個頁面，兩個頁面互傳東西
-        intent.setClass(this,DrinkMenuActivity.class);//當前的activity；想呼叫到哪個activity
-        startActivity(intent); //會把DrinkMenuActivity呼叫出來，並進行lifecycle，新的頁面會直接疊在舊的頁面上會形成一個stack
+        intent.setClass(this, DrinkMenuActivity.class);//當前的activity；想呼叫到哪個activity
+        startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY); //會把DrinkMenuActivity呼叫出來，並進行lifecycle，新的頁面會直接疊在舊的頁面上會形成一個stack
+        //須給他REQUEST_CODE_DRINK_MENU_ACTIVITY，即可知道攜帶出去與回來是否相同
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) //辨別從哪個activity回來；表示o不ok；攜帶回的資料
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY)
+        {
+            if(resultCode == RESULT_OK) //成功的從那個頁面帶回資料
+            {
+                String result = data.getStringExtra("result"); //所對應到的key值為result
+                Toast.makeText(this,result,Toast.LENGTH_LONG).show(); //哪個activity；印出什麼；顯示時間長短
+            }
+        }
+    }
 
-   @Override
+    @Override
    protected void onStart() {
        super.onStart();
        Log.d("REBUG", "MainActivityOnStart");
