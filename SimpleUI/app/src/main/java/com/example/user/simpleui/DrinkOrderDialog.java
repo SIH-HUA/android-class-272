@@ -1,12 +1,17 @@
 package com.example.user.simpleui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment; //import android.support.v4.app.Fragment;  為了支援之前的API
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DialerFilter;
 import android.widget.TextView;
 
 
@@ -18,7 +23,7 @@ import android.widget.TextView;
  * Use the {@link DrinkOrderDialog#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DrinkOrderDialog extends Fragment //繼承後就會變成子頁面
+public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子頁面
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,24 +58,54 @@ public class DrinkOrderDialog extends Fragment //繼承後就會變成子頁面
         return fragment;
     } //須事先做的設定
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) { //從activity拿到資料
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1); //從Bundle拿出變數
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    //用了DialogFragment就不用用下面的了，因為內部就有了
+
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) { //從activity拿到資料
+//        super.onCreate(savedInstanceState);
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1); //從Bundle拿出變數
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
+//    }
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) { //設定layout
+//        // Inflate the layout for this fragment
+//        return inflater.inflate(R.layout.fragment_drink_order_dialog, container, false); //將fragment_drink_order_dialog，lay(new)出來
+//        //可從這拿到UI conponent(下面程式碼)
+//        /*View view = inflater.inflate(R.layout.fragment_drink_order_dialog, container, false);
+//                TextView textview = view;*/
+//    }
+
+    @Override //把 onCreate 跟onCreateView包起來
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+//        return super.onCreateDialog(savedInstanceState);
+        if(getArguments() != null)
+        {
+
         }
+
+        View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null); //dialog 內包含的內容
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); //會依照他的架構popup他的視窗
+        builder.setView(contentView)
+                .setTitle("Hello Dailog")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }); //PositiveButton: 確定這設定或取消
+        return builder.create();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) { //設定layout
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_drink_order_dialog, container, false); //將fragment_drink_order_dialog，lay(new)出來
-        //可從這拿到UI conponent(下面程式碼)
-        /*View view = inflater.inflate(R.layout.fragment_drink_order_dialog, container, false);
-                TextView textview = view;*/
-    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) { //真正溝通的時候
