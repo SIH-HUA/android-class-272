@@ -1,6 +1,9 @@
 package com.example.user.simpleui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrinkMenuActivity extends AppCompatActivity {
+public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDialog.OnFragmentInteractionListener{
 
     ListView drinkMenuListView;//拿UI元件
     TextView totalTextView;
@@ -36,8 +39,9 @@ public class DrinkMenuActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Drink drink = (Drink)parent.getAdapter().getItem(position);
-                total+=drink.mPrice;
-                totalTextView.setText(String.valueOf(total));
+                /*total+=drink.mPrice;
+                                totalTextView.setText(String.valueOf(total));*/
+                showDrinkOrderDialog(drink);
             }
         });
 
@@ -70,7 +74,7 @@ public class DrinkMenuActivity extends AppCompatActivity {
     {
         Intent intent = new Intent();
         intent.putExtra("result","取消訂單");
-        setResult(RESULT_CANCELED,intent); 
+        setResult(RESULT_CANCELED,intent);
         finish();
     }
 
@@ -78,6 +82,16 @@ public class DrinkMenuActivity extends AppCompatActivity {
     {
         DrinkAdapter adapter = new DrinkAdapter(this,drinkList);
         drinkMenuListView.setAdapter(adapter);
+    }
+
+    private void showDrinkOrderDialog(Drink drink)
+    {
+        FragmentManager fragmentManager = getFragmentManager(); //可以從activity裡拿到東西
+        FragmentTransaction ft = fragmentManager.beginTransaction(); //避免每次替換fragment時，會以一個Transaction單位去做，避免卡住；會依據現有狀況，判斷何時做這件事；
+        DrinkOrderDialog dialog  = DrinkOrderDialog.newInstance("",""); //為了把變數放到BUNDLE內，因為bundle不一定辨識的了每一個
+
+        ft.replace(R.id.root,dialog); //會替換當前頁面底下的fragment。希望把root底下的fragment換到當前的fragmet
+        ft.commit();
     }
 
     @Override
@@ -108,5 +122,10 @@ public class DrinkMenuActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("REBUG", "DrinkMenuActivityOnDestroy");
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
     }
 }
