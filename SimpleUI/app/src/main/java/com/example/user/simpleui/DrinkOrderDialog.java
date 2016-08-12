@@ -30,9 +30,7 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Drink drink;
 
     private OnFragmentInteractionListener mListener;
 
@@ -43,17 +41,15 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment DrinkOrderDialog.
      */
     // TODO: Rename and change types and number of parameters
-    public static DrinkOrderDialog newInstance(String param1, String param2) {//希望new出來的東西是現做設定，不讓他人發現
+    public static DrinkOrderDialog newInstance(Drink drink) {//希望new出來的東西是現做設定，不讓他人發現
         DrinkOrderDialog fragment = new DrinkOrderDialog();
         Bundle args = new Bundle(); //Bundle會攜帶所需的變數
-        args.putString(ARG_PARAM1, param1); //給onCreate的變數
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_PARAM1,drink);
+//        args.putString(ARG_PARAM1, param1); //給onCreate的變數
+//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args); //會被攜帶到onCreate被讀取(記憶體區塊Bundle)
         return fragment;
     } //須事先做的設定
@@ -84,13 +80,13 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
 //        return super.onCreateDialog(savedInstanceState);
         if(getArguments() != null)
         {
-
+            drink = getArguments().getParcelable(ARG_PARAM1); //從drink拿出東西
         }
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null); //dialog 內包含的內容
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); //會依照他的架構popup他的視窗
         builder.setView(contentView)
-                .setTitle("Hello Dailog")
+                .setTitle(drink.name)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

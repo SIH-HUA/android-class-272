@@ -88,7 +88,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     {
         FragmentManager fragmentManager = getFragmentManager(); //可以從activity裡拿到東西
         FragmentTransaction ft = fragmentManager.beginTransaction(); //避免每次替換fragment時，會以一個Transaction單位去做，避免卡住；會依據現有狀況，判斷何時做這件事；
-        DrinkOrderDialog dialog  = DrinkOrderDialog.newInstance("",""); //為了把變數放到BUNDLE內，因為bundle不一定辨識的了每一個
+        DrinkOrderDialog dialog  = DrinkOrderDialog.newInstance(drink); //為了把變數放到BUNDLE內，因為bundle不一定辨識的了每一個
 
 //        ft.replace(R.id.root,dialog); //會替換當前頁面底下的fragment。希望把root底下的fragment換到當前的fragmet
 //        ft.commit();
