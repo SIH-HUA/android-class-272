@@ -136,16 +136,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) //辨別從哪個activity回來；表示o不ok；攜帶回的資料
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY)
-        {
-            if(resultCode == RESULT_OK) //成功的從那個頁面帶回資料
+        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY) {
+            if (resultCode == RESULT_OK) //成功的從那個頁面帶回資料
             {
                 String result = data.getStringExtra("result"); //所對應到的key值為result
-                Toast.makeText(this,result,Toast.LENGTH_LONG).show(); //哪個activity；印出什麼；顯示時間長短
+                Toast.makeText(this, result, Toast.LENGTH_LONG).show(); //哪個activity；印出什麼；顯示時間長短
+            }
+            if (resultCode == RESULT_CANCELED) {
+                String result = data.getStringExtra("result");
+                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
             }
         }
-    }
 
+    }
     @Override
    protected void onStart() {
        super.onStart();

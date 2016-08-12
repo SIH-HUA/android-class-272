@@ -66,7 +66,13 @@ public class DrinkMenuActivity extends AppCompatActivity {
         finish();
 
     }
-
+    public void cancel(View view)
+    {
+        Intent intent = new Intent();
+        intent.putExtra("result","取消訂單");
+        setResult(RESULT_CANCELED,intent); 
+        finish();
+    }
 
     private void setupDrinkMenu()
     {

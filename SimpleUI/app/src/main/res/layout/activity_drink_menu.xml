@@ -47,4 +47,14 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="done" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CANCEL"
+        android:id="@+id/button4"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_toLeftOf="@+id/button3"
+        android:layout_toStartOf="@+id/button3"
+        android:onClick="cancel" />
 </RelativeLayout>
