@@ -26,16 +26,20 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     int[] imageIds = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4}; //給圖片ID
     int total = 0;
     List<Drink> drinkList = new ArrayList<>();
-    List<DrinkOrder> drinkOrderList = new ArrayList<>(); //儲存飲料訂單
-
+    ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>(); //儲存飲料訂單
+    //若要攜帶到bundle或intent理，須換成arrayList型態
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drink_menu);
         setdata(); //將資料丟入drink內
+
+        Intent intent = getIntent();
+        drinkOrderList = intent.getParcelableArrayListExtra("result");
+
         drinkMenuListView = (ListView)findViewById(R.id.drinkMenuListView); //藉由這個找id
         totalTextView = (TextView)findViewById(R.id.totalTextView);
-
+        updateTotalTextView();
         drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,7 +70,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     public void done(View view)
     {
         Intent intent = new Intent();
-        intent.putExtra("result",String.valueOf(total)); //將資料丟入intent內
+        intent.putExtra("result",drinkOrderList); //將資料丟入intent內
         setResult(RESULT_OK,intent); //當activity退掉時，o不ok；回去狀態ok，回去攜帶的資料為intent
         finish();
 

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     String drink = "Black Tea"; //初始飲料
 
+    ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>();
     List<Order> data = new ArrayList<>();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -117,9 +118,10 @@ public class MainActivity extends AppCompatActivity {
         editText.setText(" ");
         Order order = new Order();
         order.note = text;
-        order.drink = drink;
+        order.drinkOrderList = drinkOrderList;  //當使用者按下clicl確定訂購資訊，提交
         order.storeInfo = (String) spinner.getSelectedItem(); //物件型態轉String，給被選取的item資料
         data.add(order); //將東西丟入list內
+        drinkOrderList = new ArrayList<>();//當使用者按下clicl確定訂購資訊，提交後清空訂單
         setupListView(); ///重整listview
 
     }
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToMenu(View view) //誰呼叫誰進來
     {
         Intent intent = new Intent(); //呼叫第二個頁面，兩個頁面互傳東西
+        intent.putExtra("result",drinkOrderList);
         intent.setClass(this, DrinkMenuActivity.class);//當前的activity；想呼叫到哪個activity
         startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY); //會把DrinkMenuActivity呼叫出來，並進行lifecycle，新的頁面會直接疊在舊的頁面上會形成一個stack
         //須給他REQUEST_CODE_DRINK_MENU_ACTIVITY，即可知道攜帶出去與回來是否相同
@@ -139,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY) {
             if (resultCode == RESULT_OK) //成功的從那個頁面帶回資料
             {
-                String result = data.getStringExtra("result"); //所對應到的key值為result
-                Toast.makeText(this, result, Toast.LENGTH_LONG).show(); //哪個activity；印出什麼；顯示時間長短
+                //會從intent裡拿到資料，從上一頁拿到
+                drinkOrderList = data.getParcelableArrayListExtra("result"); //所對應到的key值為result
+              //  Toast.makeText(this, result, Toast.LENGTH_LONG).show(); //哪個activity；印出什麼；顯示時間長短
             }
             if (resultCode == RESULT_CANCELED) {
                 String result = data.getStringExtra("result");

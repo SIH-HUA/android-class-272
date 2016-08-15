@@ -65,7 +65,7 @@ public class OrderAdapter extends BaseAdapter //繼承BaseAdapter時，會自動
 
         Order order = orders.get(position); //去拿資料
         holder.noteTextView.setText(order.note); //在放到UI conponent內
-        holder.drinkTextView.setText(order.drink);
+        holder.drinkTextView.setText(String.valueOf(order.getTotal())); //顯示價錢
         holder.storeInfoTextView.setText(order.storeInfo);
 
         return convertView;
