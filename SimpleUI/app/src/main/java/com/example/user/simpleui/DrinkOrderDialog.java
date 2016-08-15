@@ -8,11 +8,11 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment; //import android.support.v4.app.Fragment;  為了支援之前的API
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.DialerFilter;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 
 /**
@@ -29,6 +29,12 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    NumberPicker mNumberPicker;
+    NumberPicker lNumberPicker;
+    RadioGroup iceRadioGroup;
+    RadioGroup sugarRadioGroup;
+    EditText noteEditText;
 
     private Drink drink;
 
@@ -89,7 +95,18 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
                 .setTitle(drink.name)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which)  //先把drinkOrder做出，再回傳
+                {
+                    DrinkOrder drinkOrder = new DrinkOrder(drink);
+                    drinkOrder.mNumber = mNumberPicker.getValue(); //拿出並設定到drinkOrder內
+                    drinkOrder.lNumber = lNumberPicker.getValue();
+                    drinkOrder.ice = getSeletedTextFromRadioGroup(iceRadioGroup);
+                    drinkOrder.sugar = getSeletedTextFromRadioGroup(sugarRadioGroup);
+                    drinkOrder.note = noteEditText.getText().toString();
+                    if(mListener != null) //確認drinkmMenuActivity是否為null，介面
+                    {
+                        mListener.onDrinkOrderResult(drinkOrder);
+                    }
 
                 }
             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -98,18 +115,35 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
 
                 }
             }); //PositiveButton: 確定這設定或取消
+        mNumberPicker = (NumberPicker)contentView.findViewById(R.id.mNumberPicker); //用contentView拿出UI元件
+        lNumberPicker = (NumberPicker)contentView.findViewById(R.id.lNumberPicker);
+        iceRadioGroup = (RadioGroup)contentView.findViewById(R.id.iceRadioGroup);
+        sugarRadioGroup = (RadioGroup)contentView.findViewById(R.id.sugarRadioGroup);
+        noteEditText = (EditText)contentView.findViewById(R.id.noteEditText);
+
+
+        mNumberPicker.setMaxValue(100); //最大跟最少數量
+        mNumberPicker.setMinValue(0);
+        lNumberPicker.setMaxValue(100);
+        lNumberPicker.setMinValue(0);
+
         return builder.create();
     }
 
+    private String getSeletedTextFromRadioGroup(RadioGroup radioGroup)
+    {
+        int id = radioGroup.getCheckedRadioButtonId(); //去radioGroup拿botton的id
+        RadioButton radioButton = (RadioButton)radioGroup.findViewById(id);//以拿到id不再需要R.id
+        return  radioButton.getText().toString();
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) { //真正溝通的時候
-        if (mListener != null) { //確認是否有會的人存在，才可實作onFragmentInteraction
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
+//    public void onButtonPressed(Uri uri) { //真正溝通的時候
+//        if (mListener != null) { //確認是否有會的人存在，才可實作onFragmentInteraction
+//            mListener.onDrinkOrderResult(uri);
+//        }
+//    }//因為OnFragmentInteractionListener改了傳入職，因此不用uri
     @Override
     public void onAttach(Context context) //context => activity傳入，建立橋梁
     {
@@ -142,7 +176,6 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
      */
     public interface OnFragmentInteractionListener //定義了一個介面，需實作下面function，建立橋梁
     {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onDrinkOrderResult(DrinkOrder drinkOrder);
     }
 }

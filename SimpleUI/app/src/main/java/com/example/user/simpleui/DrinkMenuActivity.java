@@ -26,6 +26,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     int[] imageIds = {R.drawable.drink1,R.drawable.drink2,R.drawable.drink3,R.drawable.drink4}; //給圖片ID
     int total = 0;
     List<Drink> drinkList = new ArrayList<>();
+    List<DrinkOrder> drinkOrderList = new ArrayList<>(); //儲存飲料訂單
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
 //        ft.replace(R.id.root,dialog); //會替換當前頁面底下的fragment。希望把root底下的fragment換到當前的fragmet
 //        ft.commit();
-        dialog.show(ft,"DrinkOrderDialog"); //會自動把Transaction作commit
+        dialog.show(ft, "DrinkOrderDialog"); //會自動把Transaction作commit
     }
 
     @Override
@@ -126,7 +127,20 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onDrinkOrderResult(DrinkOrder drinkOrder) //收到資料儲存，並且更新總數的資料
+    {
+        drinkOrderList.add(drinkOrder); //將drinkOrder加入drinkOrderList內
+        updateTotalTextView();
 
+    }
+
+    private void updateTotalTextView() //將drinkOrderList內的飲料訂單拿出並且做加總
+    {
+        int total = 0;
+        for(DrinkOrder drinkOrder : drinkOrderList)
+        {
+            total += drinkOrder.lNumber*drinkOrder.drink.lPrice+drinkOrder.mNumber*drinkOrder.drink.mPrice;
+        }
+        totalTextView.setText(String.valueOf(total));
     }
 }
