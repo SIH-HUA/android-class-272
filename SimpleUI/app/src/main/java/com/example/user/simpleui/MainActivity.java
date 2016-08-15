@@ -1,10 +1,13 @@
 package com.example.user.simpleui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.View;
@@ -41,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>();
     List<Order> data = new ArrayList<>();
+
+    //以UI狀態為例子做儲存，當成是再次被執行時，會紀錄之前的狀態資料
+    SharedPreferences sharedPreferences; //小資料儲存，類似音量，震動，UI狀態，使用者資料，app資料，app設定
+    SharedPreferences.Editor editor; //須讓sharedPreferences儲存的地方
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -57,6 +65,33 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = (RadioGroup) findViewById(R.id.radio123);
         listView = (ListView) findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
+
+        sharedPreferences = getSharedPreferences("UIState", MODE_PRIVATE); //建立一個xml檔
+        editor = sharedPreferences.edit(); //寫檔的話用edit寫
+
+        //若他沒儲存過editText的狀態，就讓他為空字串
+        editText.setText(sharedPreferences.getString("editText",""));  //若之前已有寫過狀態的話，就要設定回去
+        //當使用者修改所塔的字，須把它放入sharedPreferences
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override //字被改變之前
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override //將修改的字儲存到sharedPreferences
+            public void onTextChanged(CharSequence s, int start, int before, int count)  //在哪打，取代什麼字，多少字
+            {
+                editor.putString("editText",editText.getText().toString());
+                editor.apply(); //最commit的動作，會將改的東西寫入sharedPreferences
+            }
+
+            @Override//字被改變之後
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
