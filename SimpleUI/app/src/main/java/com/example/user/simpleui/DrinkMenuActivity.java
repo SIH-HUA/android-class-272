@@ -87,9 +87,23 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     private void showDrinkOrderDialog(Drink drink)
     {
+        DrinkOrder order = null;
+        for(DrinkOrder drinkOrder : drinkOrderList)
+        {
+            if(drinkOrder.drink.name.equals(drink.name)) //若有相同訂單，就傳入該筆訂單
+            {
+                order = drinkOrder;
+                break;
+            }
+        }
+        if(order == null) //若沒有相同訂單，須建立
+        {
+            order = new DrinkOrder(drink);
+        }
+
         FragmentManager fragmentManager = getFragmentManager(); //可以從activity裡拿到東西
         FragmentTransaction ft = fragmentManager.beginTransaction(); //避免每次替換fragment時，會以一個Transaction單位去做，避免卡住；會依據現有狀況，判斷何時做這件事；
-        DrinkOrderDialog dialog  = DrinkOrderDialog.newInstance(drink); //為了把變數放到BUNDLE內，因為bundle不一定辨識的了每一個
+        DrinkOrderDialog dialog  = DrinkOrderDialog.newInstance(order); //為了把變數放到BUNDLE內，因為bundle不一定辨識的了每一個
 
 //        ft.replace(R.id.root,dialog); //會替換當前頁面底下的fragment。希望把root底下的fragment換到當前的fragmet
 //        ft.commit();
@@ -129,9 +143,22 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     @Override
     public void onDrinkOrderResult(DrinkOrder drinkOrder) //收到資料儲存，並且更新總數的資料
     {
-        drinkOrderList.add(drinkOrder); //將drinkOrder加入drinkOrderList內
-        updateTotalTextView();
+        boolean flag = false; //標記有無找到
 
+        for(int i=0 ; i<drinkOrderList.size();i++)
+        {
+            if(drinkOrderList.get(i).drink.name.equals(drinkOrder.drink.name)) //比對字串用equal
+            {
+                //不可以order=drinkOrder，因為會沒有下一比連結
+                drinkOrderList.set(i,drinkOrder);
+                flag = true;
+                break;
+            }
+
+        }
+        if(flag == false)
+            drinkOrderList.add(drinkOrder); //將drinkOrder加入drinkOrderList內
+        updateTotalTextView();
     }
 
     private void updateTotalTextView() //將drinkOrderList內的飲料訂單拿出並且做加總

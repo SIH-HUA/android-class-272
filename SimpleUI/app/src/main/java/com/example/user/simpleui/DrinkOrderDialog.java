@@ -36,7 +36,7 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
     RadioGroup sugarRadioGroup;
     EditText noteEditText;
 
-    private Drink drink;
+    private DrinkOrder drinkOrder;
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,10 +50,10 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
      * @return A new instance of fragment DrinkOrderDialog.
      */
     // TODO: Rename and change types and number of parameters
-    public static DrinkOrderDialog newInstance(Drink drink) {//希望new出來的東西是現做設定，不讓他人發現
+    public static DrinkOrderDialog newInstance(DrinkOrder drinkOrder) {//希望new出來的東西是現做設定，不讓他人發現
         DrinkOrderDialog fragment = new DrinkOrderDialog();
         Bundle args = new Bundle(); //Bundle會攜帶所需的變數
-        args.putParcelable(ARG_PARAM1,drink);
+        args.putParcelable(ARG_PARAM1,drinkOrder);
 //        args.putString(ARG_PARAM1, param1); //給onCreate的變數
 //        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args); //會被攜帶到onCreate被讀取(記憶體區塊Bundle)
@@ -86,18 +86,17 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
 //        return super.onCreateDialog(savedInstanceState);
         if(getArguments() != null)
         {
-            drink = getArguments().getParcelable(ARG_PARAM1); //從drink拿出東西
+            this.drinkOrder = getArguments().getParcelable(ARG_PARAM1); //從bundle拿出東西
         }
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null); //dialog 內包含的內容
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); //會依照他的架構popup他的視窗
         builder.setView(contentView)
-                .setTitle(drink.name)
+                .setTitle(drinkOrder.drink.name)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which)  //先把drinkOrder做出，再回傳
                 {
-                    DrinkOrder drinkOrder = new DrinkOrder(drink);
                     drinkOrder.mNumber = mNumberPicker.getValue(); //拿出並設定到drinkOrder內
                     drinkOrder.lNumber = lNumberPicker.getValue();
                     drinkOrder.ice = getSeletedTextFromRadioGroup(iceRadioGroup);
@@ -124,9 +123,13 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
 
         mNumberPicker.setMaxValue(100); //最大跟最少數量
         mNumberPicker.setMinValue(0);
+        mNumberPicker.setValue(drinkOrder.mNumber); //設定數字為我們一開始選的數字
         lNumberPicker.setMaxValue(100);
         lNumberPicker.setMinValue(0);
-
+        lNumberPicker.setValue(drinkOrder.lNumber);
+        noteEditText.setText(drinkOrder.note);
+        setSelectedTextInRadioGroup(drinkOrder.ice,iceRadioGroup); //若沒訂購過，還是會選擇GEGULAR
+        setSelectedTextInRadioGroup(drinkOrder.sugar,sugarRadioGroup); //復原
         return builder.create();
     }
 
@@ -137,6 +140,26 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
         return  radioButton.getText().toString();
     }
 
+    private void setSelectedTextInRadioGroup(String selectedText,RadioGroup radioGroup) //要選擇什麼字，從radioGroup找到該按鈕並勾選
+    {
+        int count = radioGroup.getChildCount();
+        for(int i=0;i<count;i++)
+        {
+            View view = radioGroup.getChildAt(i);
+            if(view instanceof RadioButton) //判斷是否為RadioButton
+            {
+                RadioButton radioButton = (RadioButton)view;
+                if(radioButton.getText().toString().equals(selectedText))
+                {
+                    radioButton.setChecked((true));
+                }
+                else
+                {
+                    radioButton.setChecked(false);
+                }
+            }
+        }
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) { //真正溝通的時候
