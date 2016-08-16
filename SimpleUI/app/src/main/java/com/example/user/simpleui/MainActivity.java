@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPreferences.edit(); //寫檔的話用edit寫
 
         //若他沒儲存過editText的狀態，就讓他為空字串
-        editText.setText(sharedPreferences.getString("editText",""));  //若之前已有寫過狀態的話，就要設定回去
+        editText.setText(sharedPreferences.getString("editText", ""));  //若之前已有寫過狀態的話，就要設定回去
         //當使用者修改所塔的字，須把它放入sharedPreferences
         editText.addTextChangedListener(new TextWatcher() {
             @Override //字被改變之前
@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
             @Override //將修改的字儲存到sharedPreferences
             public void onTextChanged(CharSequence s, int start, int before, int count)  //在哪打，取代什麼字，多少字
             {
-                editor.putString("editText",editText.getText().toString());
-                editor.apply(); //最commit的動作，會將改的東西寫入sharedPreferences
+                editor.putString("editText", editText.getText().toString());
+                editor.apply(); //做commit的動作，會將改的東西寫入sharedPreferences
             }
 
             @Override//字被改變之後
@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
 
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -143,6 +145,19 @@ public class MainActivity extends AppCompatActivity {
         String[] storeInfo = getResources().getStringArray(R.array.storeInfo); //重resource裡拿出定義檔
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
         spinner.setAdapter(adapter);
+        spinner.setSelection(sharedPreferences.getInt("spinner", 0));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                editor.putInt("spinner", spinner.getSelectedItemPosition());
+                editor.apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public void click(View view) //因為view是所有原件的parent，因此用view
