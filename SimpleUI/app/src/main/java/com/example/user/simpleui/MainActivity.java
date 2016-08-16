@@ -117,32 +117,33 @@ public class MainActivity extends AppCompatActivity {
         setupListView();
         setupSpinner();
 
-        ParseObject testObject = new ParseObject("TestObject"); //表示創造一個ParseObject物件，名稱為TestObject
-        testObject.put("foo", "bar"); //創造一個變數foo，裡面有個key直bar
-        testObject.saveInBackground(); //上傳到server
-        testObject.saveInBackground(new SaveCallback() //若有發生任何錯誤，會顯示，把物件上傳
-        {
-            @Override
-            public void done(ParseException e) //等server回傳回來才會執行，與做的時間無關
-            {
-                if (e == null) {
-                    Toast.makeText(MainActivity.this, "Sucess", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("TestObject"); //把物件下載回來
-        query.findInBackground(new FindCallback<ParseObject>() //創造出一個Background的執行序，去網路上下載資料
-         {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) //傳回來的物件，錯誤回報
-            {
-                if(e == null) //表示沒找到任何東西
-                {
-                    Toast.makeText(MainActivity.this,objects.get(0).getString("foo"),Toast.LENGTH_LONG).show();//第幾筆，相對應的key值
-                }
-            }
-        });
+        //**資料網路上傳與下載
+//        ParseObject testObject = new ParseObject("TestObject"); //表示創造一個ParseObject物件，名稱為TestObject
+//        testObject.put("foo", "bar"); //創造一個變數foo，裡面有個key直bar
+//        testObject.saveInBackground(); //上傳到server
+//        testObject.saveInBackground(new SaveCallback() //若有發生任何錯誤，會顯示，把物件上傳
+//        {
+//            @Override
+//            public void done(ParseException e) //等server回傳回來才會執行，與做的時間無關
+//            {
+//                if (e == null) {
+//                    Toast.makeText(MainActivity.this, "Sucess", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//
+//        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("TestObject"); //把物件下載回來
+//        query.findInBackground(new FindCallback<ParseObject>() //創造出一個Background的執行序，去網路上下載資料
+//         {
+//            @Override
+//            public void done(List<ParseObject> objects, ParseException e) //傳回來的物件，錯誤回報
+//            {
+//                if(e == null) //表示沒找到任何東西
+//                {
+//                    Toast.makeText(MainActivity.this,objects.get(0).getString("foo"),Toast.LENGTH_LONG).show();//第幾筆，相對應的key值
+//                }
+//            }
+//        });
 
         Log.d("REBUG", "MainActivityOnCreate");
 
