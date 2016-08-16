@@ -2,33 +2,32 @@ package com.example.user.simpleui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String drink = "Black Tea"; //初始飲料
 
     ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>();
-    List<Order> data = new ArrayList<>();
+    List<Order> orderList = new ArrayList<>();
 
     //以UI狀態為例子做儲存，當成是再次被執行時，會紀錄之前的狀態資料
     SharedPreferences sharedPreferences; //小資料儲存，類似音量，震動，UI狀態，使用者資料，app資料，app設定
@@ -114,18 +113,68 @@ public class MainActivity extends AppCompatActivity {
             }
         }); //當item被點選時會觸發的事件
 
+        setupOrderHistory(); //復原資料
         setupListView();
         setupSpinner();
+
+        ParseObject testObject = new ParseObject("TestObject"); //表示創造一個ParseObject物件，名稱為TestObject
+        testObject.put("foo", "bar"); //創造一個變數foo，裡面有個key直bar
+        testObject.saveInBackground(); //上傳到server
+        testObject.saveInBackground(new SaveCallback() //若有發生任何錯誤，會顯示，把物件上傳
+        {
+            @Override
+            public void done(ParseException e) //等server回傳回來才會執行，與做的時間無關
+            {
+                if (e == null) {
+                    Toast.makeText(MainActivity.this, "Sucess", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("TestObject"); //把物件下載回來
+        query.findInBackground(new FindCallback<ParseObject>() //創造出一個Background的執行序，去網路上下載資料
+         {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) //傳回來的物件，錯誤回報
+            {
+                if(e == null) //表示沒找到任何東西
+                {
+                    Toast.makeText(MainActivity.this,objects.get(0).getString("foo"),Toast.LENGTH_LONG).show();//第幾筆，相對應的key值
+                }
+            }
+        });
 
         Log.d("REBUG", "MainActivityOnCreate");
 
     }
 
+    private void setupOrderHistory()
+    {
+        String orderDatas = Utils.readFile(this,"history");
+        String[] orderDataArray = orderDatas.split("\n"); //依據換行做切割
+        Gson gson = new Gson(); //藉由gson把資料復原為order
+        for(String orderData : orderDataArray) //跑過每筆資料
+        {
+            try{
+                Order order = gson.fromJson(orderData,Order.class); //復原orderData；復原成什麼樣子
+                if(order!=null)
+                {
+                    orderList.add(order);
+                }
+            }
+            catch (JsonSyntaxException e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     private void setupListView() {
-        //String[] data = new String[]{"1","2","3","4","5","6","7","8"};
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, data); //轉換成每筆有用的ITEM
+        //String[] orderList = new String[]{"1","2","3","4","5","6","7","8"};
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, orderList); //轉換成每筆有用的ITEM
         /*List<Map<String,String>> mapList = new ArrayList<>();   //第一個客製化itemView的方法
-        for(Order order : data)
+        for(Order order : orderList)
         {
             Map<String,String> item = new HashMap<>();
             item.put("note",order.note); //拿出order的資訊
@@ -137,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         String[] from = {"note","storeInfo","drink"}; //從哪拿來
         int[] to = {R.id.noteTextView,R.id.storeInfoTextView,R.id.drinkTextView};
         SimpleAdapter adapter = new SimpleAdapter(this,mapList,R.layout.listview_order_item,from,to); //所有資料，item，從哪拿，拿去哪*/
-        OrderAdapter adapter = new OrderAdapter(this, data); //是一個activity；資料
+        OrderAdapter adapter = new OrderAdapter(this, orderList); //是一個activity；資料
         listView.setAdapter(adapter);
     }
 
@@ -145,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         String[] storeInfo = getResources().getStringArray(R.array.storeInfo); //重resource裡拿出定義檔
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
         spinner.setAdapter(adapter);
-        spinner.setSelection(sharedPreferences.getInt("spinner", 0));
+        spinner.setSelection(sharedPreferences.getInt("spinner", 0)); //spinner的sharedPreferences，紀錄資料
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -170,7 +219,12 @@ public class MainActivity extends AppCompatActivity {
         order.note = text;
         order.drinkOrderList = drinkOrderList;  //當使用者按下clicl確定訂購資訊，提交
         order.storeInfo = (String) spinner.getSelectedItem(); //物件型態轉String，給被選取的item資料
-        data.add(order); //將東西丟入list內
+        orderList.add(order); //將東西丟入list內
+
+        Gson gson = new Gson(); //可以藉由gson轉為字串
+        String orderData = gson.toJson(order); //將物件轉為字串
+        Utils.writeFile(this,"history",orderData + '\n');
+
         drinkOrderList = new ArrayList<>();//當使用者按下clicl確定訂購資訊，提交後清空訂單
         setupListView(); ///重整listview
 
