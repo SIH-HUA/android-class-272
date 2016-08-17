@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Order order = (Order) parent.getAdapter().getItem(position);
-                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//若直接打this會直接指向包住的listener，不會指向Main activity //出現顯示框
+                //Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//若直接打this會直接指向包住的listener，不會指向Main activity //出現顯示框
             }
         }); //當item被點選時會觸發的事件
 
@@ -151,24 +151,36 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupOrderHistory()
     {
-        String orderDatas = Utils.readFile(this,"history");
-        String[] orderDataArray = orderDatas.split("\n"); //依據換行做切割
-        Gson gson = new Gson(); //藉由gson把資料復原為order
-        for(String orderData : orderDataArray) //跑過每筆資料
-        {
-            try{
-                Order order = gson.fromJson(orderData,Order.class); //復原orderData；復原成什麼樣子
-                if(order!=null)
+        Order.getQuery().findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> objects, ParseException e) {
+                if(e == null)
                 {
-                    orderList.add(order);
+                    orderList = objects;
+                    setupListView();
                 }
             }
-            catch (JsonSyntaxException e)
-            {
-                e.printStackTrace();
-            }
+        });
 
-        }
+        //會從網路上拿資料，因此註解
+//        String orderDatas = Utils.readFile(this,"history");
+//        String[] orderDataArray = orderDatas.split("\n"); //依據換行做切割
+//        Gson gson = new Gson(); //藉由gson把資料復原為order
+//        for(String orderData : orderDataArray) //跑過每筆資料
+//        {
+//            try{
+//                Order order = gson.fromJson(orderData,Order.class); //復原orderData；復原成什麼樣子
+//                if(order!=null)
+//                {
+//                    orderList.add(order);
+//                }
+//            }
+//            catch (JsonSyntaxException e)
+//            {
+//                e.printStackTrace();
+//            }
+//
+//        }
     }
 
     private void setupListView() {
@@ -217,14 +229,23 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(result);
         editText.setText(" ");
         Order order = new Order();
-        order.note = text;
-        order.drinkOrderList = drinkOrderList;  //當使用者按下clicl確定訂購資訊，提交
-        order.storeInfo = (String) spinner.getSelectedItem(); //物件型態轉String，給被選取的item資料
+        order.setNote(text);
+        order.setDrinkOrderList(drinkOrderList);  //當使用者按下clicl確定訂購資訊，提交
+        order.setStoreInfo((String) spinner.getSelectedItem()); //物件型態轉String，給被選取的item資料
         orderList.add(order); //將東西丟入list內
 
-        Gson gson = new Gson(); //可以藉由gson轉為字串
-        String orderData = gson.toJson(order); //將物件轉為字串
-        Utils.writeFile(this,"history",orderData + '\n');
+
+    //換成上傳到server
+//        Gson gson = new Gson(); //可以藉由gson轉為字串
+//        String orderData = gson.toJson(order); //將物件轉為字串
+//        Utils.writeFile(this,"history",orderData + '\n');
+        order.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null)
+                    Toast.makeText(MainActivity.this,"Order Failed",Toast.LENGTH_LONG).show();
+            }
+        }); //上傳到server
 
         drinkOrderList = new ArrayList<>();//當使用者按下clicl確定訂購資訊，提交後清空訂單
         setupListView(); ///重整listview
