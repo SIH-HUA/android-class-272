@@ -92,16 +92,16 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null); //dialog 內包含的內容
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); //會依照他的架構popup他的視窗
         builder.setView(contentView)
-                .setTitle(drinkOrder.drink.getName())
+                .setTitle(drinkOrder.getDrink().getName())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which)  //先把drinkOrder做出，再回傳
                 {
-                    drinkOrder.mNumber = mNumberPicker.getValue(); //拿出並設定到drinkOrder內
-                    drinkOrder.lNumber = lNumberPicker.getValue();
-                    drinkOrder.ice = getSeletedTextFromRadioGroup(iceRadioGroup);
-                    drinkOrder.sugar = getSeletedTextFromRadioGroup(sugarRadioGroup);
-                    drinkOrder.note = noteEditText.getText().toString();
+                    drinkOrder.setmNumber(mNumberPicker.getValue()); //拿出並設定到drinkOrder內
+                    drinkOrder.setlNumber(lNumberPicker.getValue());
+                    drinkOrder.setIce(getSeletedTextFromRadioGroup(iceRadioGroup));
+                    drinkOrder.setSugar(getSeletedTextFromRadioGroup(sugarRadioGroup));
+                    drinkOrder.setNote(noteEditText.getText().toString());
                     if(mListener != null) //確認drinkmMenuActivity是否為null，介面
                     {
                         mListener.onDrinkOrderResult(drinkOrder);
@@ -123,13 +123,13 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
 
         mNumberPicker.setMaxValue(100); //最大跟最少數量
         mNumberPicker.setMinValue(0);
-        mNumberPicker.setValue(drinkOrder.mNumber); //設定數字為我們一開始選的數字
+        mNumberPicker.setValue(drinkOrder.getmNumber()); //設定數字為我們一開始選的數字
         lNumberPicker.setMaxValue(100);
         lNumberPicker.setMinValue(0);
-        lNumberPicker.setValue(drinkOrder.lNumber);
-        noteEditText.setText(drinkOrder.note);
-        setSelectedTextInRadioGroup(drinkOrder.ice,iceRadioGroup); //若沒訂購過，還是會選擇GEGULAR
-        setSelectedTextInRadioGroup(drinkOrder.sugar,sugarRadioGroup); //復原
+        lNumberPicker.setValue(drinkOrder.getlNumber());
+        noteEditText.setText(drinkOrder.getNote());
+        setSelectedTextInRadioGroup(drinkOrder.getIce(),iceRadioGroup); //若沒訂購過，還是會選擇GEGULAR
+        setSelectedTextInRadioGroup(drinkOrder.getSugar(),sugarRadioGroup); //復原
         return builder.create();
     }
 

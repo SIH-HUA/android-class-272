@@ -15,6 +15,7 @@ public class SimpleUIApplication extends Application
     public void onCreate() {
         super.onCreate();
         ParseObject.registerSubclass(Drink.class); //沒有事先註冊客製化物件，因此須跟他說
+        ParseObject.registerSubclass(DrinkOrder.class);
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("Vc3T45tQZj6tU2xHmpvfVom9mNdz9UIZYLtoghbj") //辨識app位置
                 .server("https://parseapi.back4app.com/")

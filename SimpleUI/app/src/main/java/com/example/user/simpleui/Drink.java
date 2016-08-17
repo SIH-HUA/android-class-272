@@ -49,8 +49,6 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
             dest.writeString(getObjectId());
         }
 
-
-
     }
 
     public Drink() {
@@ -128,6 +126,6 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
             e.printStackTrace();
         }
         return Drink.createWithoutData(Drink.class,objectId);
-        //會先從網路上找
+
     }
 }

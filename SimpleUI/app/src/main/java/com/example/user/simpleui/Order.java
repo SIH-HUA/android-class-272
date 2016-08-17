@@ -15,7 +15,7 @@ public class Order {
         int total = 0;
         for(DrinkOrder drinkOrder : drinkOrderList)
         {
-            total += drinkOrder.lNumber*drinkOrder.drink.getlPrice()+drinkOrder.mNumber*drinkOrder.drink.getmPrice();
+            total += drinkOrder.getlNumber()*drinkOrder.getDrink().getlPrice()+drinkOrder.getmNumber()*drinkOrder.getDrink().getmPrice();
         }
         return  total;
     }
