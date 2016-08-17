@@ -52,9 +52,11 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
     }
 
     public Drink() {
+        super();
     }
 
     protected Drink(Parcel in) { //從包果讀出
+        super();
         this.setName(in.readString());
         this.setmPrice(in.readInt());
         this.setlPrice(in.readInt());
