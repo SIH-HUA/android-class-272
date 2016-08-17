@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -59,12 +61,16 @@ public class DrinkAdapter extends BaseAdapter
         {
             hold = (Holder)convertView.getTag(); //可以從getTag拿到holder
         }
-
+        //是local端的話，要拿東西用get
         Drink drink = drinkList.get(position); //從drinkList去拿資料
-        hold.drinkNameTextView.setText(drink.name); //在放到UI conponent內
-        hold.lPriceTextView.setText(String.valueOf(drink.lPrice));
-        hold.mPriceTextView.setText(String.valueOf(drink.mPrice));
-        hold.imageVIew.setImageResource(drink.imageId);//是去resource拿id
+        hold.drinkNameTextView.setText(drink.getName()); //在放到UI conponent內
+        hold.lPriceTextView.setText(String.valueOf(drink.getlPrice()));
+        hold.mPriceTextView.setText(String.valueOf(drink.getmPrice()));
+        //hold.imageVIew.setImageResource(drink.imageId);//是去resource拿id
+        String imageURL = drink.getImage().getUrl();//剛開始載下來時是沒檔案的，只有url
+        Picasso.with(inflater.getContext()).load(imageURL).into(hold.imageVIew);
+        //用inflater可拿到activity
+
 
         return convertView;
     }

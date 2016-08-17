@@ -28,4 +28,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.parse.bolts:bolts-android:1.+' //parse
     compile 'com.parse:parse-android:1.+'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

@@ -92,7 +92,7 @@ public class DrinkOrderDialog extends DialogFragment //繼承後就會變成子�
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog,null); //dialog 內包含的內容
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); //會依照他的架構popup他的視窗
         builder.setView(contentView)
-                .setTitle(drinkOrder.drink.name)
+                .setTitle(drinkOrder.drink.getName())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which)  //先把drinkOrder做出，再回傳

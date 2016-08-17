@@ -3,6 +3,7 @@ package com.example.user.simpleui;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 /**
  * Created by user on 2016/8/16.
@@ -13,9 +14,10 @@ public class SimpleUIApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
+        ParseObject.registerSubclass(Drink.class); //沒有事先註冊客製化物件，因此須跟他說
         Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId("76ee57f8e5f8bd628cc9586e93d428d5") //辨識app位置
-                .server("http://parseserver-ps662-env.us-east-1.elasticbeanstalk.com/parse/")
+                .applicationId("Vc3T45tQZj6tU2xHmpvfVom9mNdz9UIZYLtoghbj") //辨識app位置
+                .server("https://parseapi.back4app.com/")
                 .clientKey("iJrmtc3mr1o2sga0i3hxp75z65QRff67jqxCA7oA")
                 .build()
         );

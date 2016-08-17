@@ -3,8 +3,14 @@ package com.example.user.simpleui;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.Parse;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import javax.xml.transform.Source;
 
 /**
  * Created by user on 2016/8/11.
@@ -20,7 +26,8 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
     static  final String NAME_COL = "name"; //標明會用哪些欄位
     static  final String MPRICE_COL = "mPrice";
     static  final String LPRICE_COL = "lPrice";
-    int imageId;
+    static final String IMAGE_COL = "image";
+
 
     @Override
     public int describeContents() { //打包後的包裹序碼
@@ -29,10 +36,20 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
 
     @Override
     public void writeToParcel(Parcel dest, int flags) { //物件要如何打包，寫的順序等於拿的順序
-        dest.writeString(this.getName());
-        dest.writeInt(this.getmPrice());
-        dest.writeInt(this.getlPrice()); //dest.writeInt(this.lPrice);拿值
-        dest.writeInt(this.imageId);
+        if (getObjectId() == null)  //若還沒上傳到server端是沒有ObjectID
+        {
+            dest.writeInt(0);
+            dest.writeString(this.getName());
+            dest.writeInt(this.getmPrice());
+            dest.writeInt(this.getlPrice()); //dest.writeInt(this.lPrice);拿值
+           // dest.writeInt(this.imageId);//有寫跟沒寫沒差
+        } else
+        {
+            dest.writeInt(1); //若有ObjectID
+            dest.writeString(getObjectId());
+        }
+
+
 
     }
 
@@ -43,14 +60,24 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
         this.setName(in.readString());
         this.setmPrice(in.readInt());
         this.setlPrice(in.readInt());
-        this.imageId = in.readInt();
+//        this.imageId = in.readInt(); //有寫跟沒寫沒差
 
     }
 
     public static final Parcelable.Creator<Drink> CREATOR = new Parcelable.Creator<Drink>() { //幫包裹在復原成資料結構
         @Override
         public Drink createFromParcel(Parcel source) {
-            return new Drink(source); //建構子
+            int isFromRemote = source.readInt();
+            if(isFromRemote == 0)
+            {
+                return  new Drink(source);
+            }
+            else
+            {
+                String objectId = source.readString(); //從server端拿到資料
+                return getDrinkFromCache(objectId);
+            }
+//            return new Drink(source); //建構子
         }
 
         @Override
@@ -81,5 +108,26 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
 
     public void setmPrice(int mPrice) {
         this.put(MPRICE_COL,mPrice);
+    }
+
+    public ParseFile getImage()
+    {
+        return getParseFile(IMAGE_COL);
+    }
+
+    public static ParseQuery<Drink> getQuery()  //回傳的物件為drink
+    {
+        return ParseQuery.getQuery(Drink.class);
+    }
+    public static Drink getDrinkFromCache(String objectId) //從cache拿資料
+    {
+        try { //會先從cache找，若找不到在去網路上找
+            Drink drink = getQuery().setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK).get(objectId);
+            return drink;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Drink.createWithoutData(Drink.class,objectId);
+        //會先從網路上找
     }
 }
