@@ -69,7 +69,8 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 //            drink.imageId = imageIds[i];
 //            drinkList.add(drink); //將drink丟入drinkList內
 //        }
-        Drink.getQuery().findInBackground(new FindCallback<Drink>() {
+        Drink.getDrinksFromLocalThenRemote(new FindCallback<Drink>() //是activity要做的事，因此沒必要放到drink裡
+        {
             @Override
             public void done(List<Drink> objects, ParseException e) {
                 if(e == null) {

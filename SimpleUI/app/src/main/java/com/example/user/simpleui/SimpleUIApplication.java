@@ -21,6 +21,7 @@ public class SimpleUIApplication extends Application
                 .applicationId("Vc3T45tQZj6tU2xHmpvfVom9mNdz9UIZYLtoghbj") //辨識app位置
                 .server("https://parseapi.back4app.com/")
                 .clientKey("iJrmtc3mr1o2sga0i3hxp75z65QRff67jqxCA7oA")
+                .enableLocalDataStore() //初始手機的local端
                 .build()
         );
     }

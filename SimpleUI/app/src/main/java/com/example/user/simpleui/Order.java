@@ -1,6 +1,8 @@
 package com.example.user.simpleui;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -59,4 +61,18 @@ public class Order extends ParseObject {
                 .include(DRINKORDERLIST_COL) //表示包含什麼欄位
                 .include(DRINKORDERLIST_COL + "." + DrinkOrder.DRINK_COL); //表示DRINKORDERLIST_COL下面的DRINK_COL
     }
+
+    public static void getOrderFromLocalThenRemote(final FindCallback<Order> callback)
+    {
+        getQuery().fromLocalDatastore().findInBackground(callback);
+        getQuery().findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> list, ParseException e) {
+                if(e == null)
+                    pinAllInBackground("Order",list );
+                callback.done(list,e);
+            }
+        });
+    }
+
 }

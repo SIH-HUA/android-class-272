@@ -151,11 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupOrderHistory()
     {
-        Order.getQuery().findInBackground(new FindCallback<Order>() {
+        Order.getOrderFromLocalThenRemote(new FindCallback<Order>() {
             @Override
             public void done(List<Order> objects, ParseException e) {
-                if(e == null)
-                {
+                if (e == null) {
                     orderList = objects;
                     setupListView();
                 }
@@ -239,13 +238,15 @@ public class MainActivity extends AppCompatActivity {
 //        Gson gson = new Gson(); //可以藉由gson轉為字串
 //        String orderData = gson.toJson(order); //將物件轉為字串
 //        Utils.writeFile(this,"history",orderData + '\n');
-        order.saveInBackground(new SaveCallback() {
+        //saveEventually，若現在沒網路的狀態下，資料會先不儲存，等之後有網路了，會上傳到網路
+        order.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if(e != null)
-                    Toast.makeText(MainActivity.this,"Order Failed",Toast.LENGTH_LONG).show();
+                if (e != null)
+                    Toast.makeText(MainActivity.this, "Order Failed", Toast.LENGTH_LONG).show();
             }
         }); //上傳到server
+        order.pinInBackground("Order");
 
         drinkOrderList = new ArrayList<>();//當使用者按下clicl確定訂購資訊，提交後清空訂單
         setupListView(); ///重整listview

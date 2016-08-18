@@ -3,12 +3,16 @@ package com.example.user.simpleui;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+
+import java.util.List;
 
 import javax.xml.transform.Source;
 
@@ -122,12 +126,37 @@ public class Drink extends ParseObject implements Parcelable //使drink可打包
     public static Drink getDrinkFromCache(String objectId) //從cache拿資料
     {
         try { //會先從cache找，若找不到在去網路上找
-            Drink drink = getQuery().setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK).get(objectId);
+            Drink drink = getQuery().fromLocalDatastore().get(objectId);
             return drink;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return Drink.createWithoutData(Drink.class,objectId);
+        return Drink.createWithoutData(Drink.class, objectId);
 
+    }
+
+
+    //findCallBack為interface，表示需實做某些特定function，例如done
+    //DrinkMenuActivity的callback的東西都回傳進來
+    public static void getDrinksFromLocalThenRemote(final FindCallback<Drink> callback) //會呼叫2次cllback，第一次去local端拿，同時再從remote端拿，若rempote端有東西，第二次就更新資料
+    {
+        //下面會呼叫DrinkMenuActivity的callback的done
+        getQuery().fromLocalDatastore().findInBackground(callback); //在Parse有任何東西想拿取。都需要getQuery去詢問，從local端拿
+        getQuery().findInBackground(new FindCallback<Drink>()  //直接從網路上拿，因為要做不同事，因此須在一次FindCallback
+        {
+            @Override
+            public void done(final List<Drink> list, ParseException e) {
+                if(e == null) //表示有載到資料
+                {
+                    unpinAllInBackground("Drink", new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    pinAllInBackground("Drink", list); //更新從網路上拿到的資料
+                                }
+                    });
+                }
+                callback.done(list,e); //會呼叫叫drinkMenuActivity的done
+            }
+        });
     }
 }

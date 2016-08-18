@@ -149,7 +149,7 @@ public class DrinkOrder extends ParseObject implements Parcelable {
     {
         //希望可以把objectId換成drinkOrder
         try { //會先從cache找，若找不到在去網路上找
-            return getQuery().setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK).get(objectId);//會給我一個objectId
+            return getQuery().fromLocalDatastore().get(objectId);//會給我一個objectId
         } catch (ParseException e) {
             e.printStackTrace();
         }
