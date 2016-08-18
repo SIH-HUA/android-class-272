@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Order order = (Order) parent.getAdapter().getItem(position);
+                goToDetail(order);
                 //Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();//若直接打this會直接指向包住的listener，不會指向Main activity //出現顯示框
             }
         }); //當item被點選時會觸發的事件
@@ -260,6 +261,14 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(this, DrinkMenuActivity.class);//當前的activity；想呼叫到哪個activity
         startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY); //會把DrinkMenuActivity呼叫出來，並進行lifecycle，新的頁面會直接疊在舊的頁面上會形成一個stack
         //須給他REQUEST_CODE_DRINK_MENU_ACTIVITY，即可知道攜帶出去與回來是否相同
+    }
+
+    public void goToDetail(Order order)
+    {
+        Intent intent = new Intent();
+        intent.putExtra("order",order);
+        intent.setClass(this,OrderDetailActivity.class);
+        startActivity(intent);
     }
 
     @Override
