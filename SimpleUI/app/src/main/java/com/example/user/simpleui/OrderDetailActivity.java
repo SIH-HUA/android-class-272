@@ -34,29 +34,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         }
         drinkOrderResultsTxetView.setText(resultText);
 
-        final Handler handler = new Handler(new Handler.Callback() //當有人傳訊息給handler，handler會叫mainthread去做事情
-        {
-            @Override
-            public boolean handleMessage(Message msg) {
-                latlngTextView.setText("123456"); //更改UI的事情只能用handler叫mainthread做，不能直接放到thread\做
-                return false;
-            }
-        }); //屬於android
-
-        Thread thread = new Thread(new Runnable()//Runnable表示一件事情，一個Thread可以做很多件事情
-        {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(10000); // 10秒
-                    handler.sendMessage(new Message());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        //thread.run(); // 會先等MainThread作，在做我們的thread會延遲10秒，會變黑10秒
-        thread.start(); //在background做，因此畫面不會變黑
+        (new GeoCodingTask()).execute(""); //執行方法
 
     }
 }
