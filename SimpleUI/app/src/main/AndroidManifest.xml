@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.simpleui">
 
-    <!--表示需要網路，並會向OS取得現在狀態-->
+    <!-- 表示需要網路，並會向OS取得現在狀態 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -27,8 +27,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-<!--新新增的activity-->
-        <activity android:name=".DrinkMenuActivity"></activity>
+        <!-- 新新增的activity -->
+        <activity android:name=".DrinkMenuActivity" />
+        <activity android:name=".OrderDetailActivity"></activity>
     </application>
 
 </manifest>
