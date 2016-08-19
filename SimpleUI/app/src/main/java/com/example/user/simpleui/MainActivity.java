@@ -203,24 +203,39 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
+
+
     private void setupSpinner() {
-        String[] storeInfo = getResources().getStringArray(R.array.storeInfo); //重resource裡拿出定義檔
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(sharedPreferences.getInt("spinner", 0)); //spinner的sharedPreferences，紀錄資料
+        final List<String> storeInfo = new ArrayList<String>();
+        //String[] storeInfo = getResources().getStringArray(R.array.storeInfo); //重resource裡拿出定義檔
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("StoreInfo");
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                for (ParseObject object : objects) {
+                    storeInfo.add(object.getString("name") + "," + object.getString("address"));
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
+                spinner.setAdapter(adapter);
+                spinner.setSelection(sharedPreferences.getInt("spinner", 0)); //spinner的sharedPreferences，紀錄資料
+            }
+        });
+
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 editor.putInt("spinner", spinner.getSelectedItemPosition());
                 editor.apply();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
     }
+
+
 
     public void click(View view) //因為view是所有原件的parent，因此用view
     {

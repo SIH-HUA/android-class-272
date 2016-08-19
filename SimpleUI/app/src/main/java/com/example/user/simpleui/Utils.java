@@ -2,10 +2,20 @@ package com.example.user.simpleui;
 
 import android.content.Context;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 
 /**
  * Created by user on 2016/8/16.
@@ -39,5 +49,62 @@ public class Utils {
             e.printStackTrace();
         }
         return "";//若沒讀到東西，救回傳空字串
+    }
+
+    public static double[] getLatlngFromAddress(String address)
+    {
+        try{
+            address = URLEncoder.encode(address,"UTF-8"); //避免中文出現亂碼
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        //geocode經緯度json格式?address後面為給的變數
+        String apiURL = "http://maps.google.com/maps/api/geocode/json?address="+address; //送一個網址給他，他會回傳東西給你
+
+        byte[] data = Utils.urlToBytes(apiURL); //將收到的資料放入byte-array
+        if(data == null)
+            return null;
+
+        String result = new String(data);
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            if(jsonObject.getString("status").equals("OK"))
+            {
+                JSONObject location = jsonObject.getJSONArray("results") //一層一層往下拿
+                                                .getJSONObject(0)
+                                                .getJSONObject("geometry")
+                                                .getJSONObject("location");
+                double lat = location.getDouble("lat");
+                double lng = location.getDouble("lng");
+                return new double[]{lat,lng}; //回傳經緯度
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null; //什麼都沒做的話就回傳null
+
+
+    }
+
+    public static byte[] urlToBytes(String urlString) //連接到server把資料載回來
+    {
+        try {
+            URL url = new URL(urlString);
+            URLConnection connection = url.openConnection();
+            InputStream inputStream = connection.getInputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); //去接收傳過來的東西
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while((len = inputStream.read(buffer))!=-1) //把東西讀到buffer裡面
+            {
+                byteArrayOutputStream.write(buffer,0,len);
+            }
+            return byteArrayOutputStream.toByteArray();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

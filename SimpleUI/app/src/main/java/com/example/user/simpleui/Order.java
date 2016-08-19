@@ -98,7 +98,8 @@ public class Order extends ParseObject implements Parcelable{
             dest.writeInt(0);
             dest.writeString(getNote());
             dest.writeString(getStoreInfo());
-            dest.writeParcelableArray((Parcelable[]) getDrinkOrderList().toArray(),flags); //需用array，需轉型
+           // dest.writeParcelableArray((Parcelable[]) getDrinkOrderList().toArray(),flags); //需用array，需轉型
+            dest.writeTypedList(getDrinkOrderList()); //上面會錯改這行
         }
         else
         {
@@ -111,7 +112,10 @@ public class Order extends ParseObject implements Parcelable{
         super();
         this.setNote(in.readString());
         this.setStoreInfo(in.readString());
-        this.setDrinkOrderList(Arrays.asList((DrinkOrder[]) in.readArray(DrinkOrder.class.getClassLoader()))); //將array讀出，再轉成DrinkOrder的array，再用readArray讀成list
+        //this.setDrinkOrderList(Arrays.asList((DrinkOrder[]) in.readArray(DrinkOrder.class.getClassLoader()))); //將array讀出，再轉成DrinkOrder的array，再用readArray讀成list
+        ArrayList<DrinkOrder>drinkOrders = new ArrayList<>();
+        in.readTypedList(drinkOrders,DrinkOrder.CREATOR);
+        this.setDrinkOrderList(drinkOrders);
     }
 
     public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
